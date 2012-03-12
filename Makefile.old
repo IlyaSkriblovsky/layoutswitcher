@@ -1,0 +1,125 @@
+ifdef 770
+PACKAGE = layoutswitcher2006
+else
+PACKAGE = layoutswitcher2008
+endif
+VERSION = 1.0
+SECTION = user/accessories
+PRIORITY = optional
+ifndef 386
+ARCHITECTURE = armel
+else
+ARCHITECTURE = i386
+endif
+ifdef 770
+DEPENDS = libgtk2.0-0, hildon-status-bar-lib0, gconf2
+else
+DEPENDS = libgtk2.0-0, libhildon1, libhildondesktop0, gconf2
+endif
+MAINTAINER = Ilya Skriblovsky (Mitrandir) <IlyaSkriblovsky@gmail.com>
+DESCRIPTION = Statusbar applet displaying current keyboard layout
+
+
+# When building for Nokia 770 use make with "770=1" option
+
+
+DEFINES = '-DVERSION="$(VERSION)"'
+
+ifdef 770
+all: TestApp libLayoutSwitcher2006.so
+else
+all: TestApp libLayoutSwitcher2008.so
+endif
+
+ifdef 770
+PACKAGES = gtk+-2.0 gconf-2.0 hildon-status-bar-lib xtst
+else
+PACKAGES = gtk+-2.0 gconf-2.0 libhildondesktop hildon-1 libosso
+endif
+
+TestApp: TestApp.o SwitcherButton.o TabletModel.o
+	gcc $^ -o $@ `pkg-config --libs $(PACKAGES)`
+
+libLayoutSwitcher2008.so: Applet2008.o SwitcherButton.o TabletModel.o
+	gcc $^ -o $@ -shared `pkg-config --libs $(PACKAGES)`
+
+libLayoutSwitcher2006.so: Applet2006.o SwitcherButton.o TabletModel.o
+	gcc $^ -o $@ -shared `pkg-config --libs $(PACKAGES)`
+
+.c.o:
+	gcc $(DEFINES) -O2 $< -o $@ -c `pkg-config --cflags $(PACKAGES)`
+
+
+COMMONICONS = layoutswitcher.png		\
+			  layoutswitcher-lock.png	\
+			  layoutswitcher-unk.png
+
+ifdef 770
+ICONS = icons2006/layoutswitcher-da_DK.png   \
+        icons2006/layoutswitcher-de_DE.png   \
+        icons2006/layoutswitcher-el_GR.png   \
+        icons2006/layoutswitcher-en_GB.png   \
+        icons2006/layoutswitcher-en_US.png   \
+        icons2006/layoutswitcher-es_ES.png   \
+        icons2006/layoutswitcher-fi_FI.png   \
+        icons2006/layoutswitcher-fr_CA.png   \
+        icons2006/layoutswitcher-fr_FR.png   \
+        icons2006/layoutswitcher-it_IT.png   \
+        icons2006/layoutswitcher-nl_NL.png   \
+        icons2006/layoutswitcher-no_NO.png   \
+        icons2006/layoutswitcher-pt_BR.png   \
+        icons2006/layoutswitcher-pt_PT.png   \
+        icons2006/layoutswitcher-ru_RU.png   \
+        icons2006/layoutswitcher-sv_SE.png
+else
+ICONS = icons2008/layoutswitcher-da_DK.png   \
+        icons2008/layoutswitcher-de_DE.png   \
+        icons2008/layoutswitcher-el_GR.png   \
+        icons2008/layoutswitcher-en_GB.png   \
+        icons2008/layoutswitcher-en_US.png   \
+        icons2008/layoutswitcher-es_ES.png   \
+        icons2008/layoutswitcher-es_MX.png   \
+        icons2008/layoutswitcher-fi_FI.png   \
+        icons2008/layoutswitcher-fr_CA.png   \
+        icons2008/layoutswitcher-fr_FR.png   \
+        icons2008/layoutswitcher-hu_HU.png   \
+        icons2008/layoutswitcher-it_IT.png   \
+        icons2008/layoutswitcher-nl_NL.png   \
+        icons2008/layoutswitcher-no_NO.png   \
+        icons2008/layoutswitcher-pl_PL.png   \
+        icons2008/layoutswitcher-pt_BR.png   \
+        icons2008/layoutswitcher-pt_PT.png   \
+        icons2008/layoutswitcher-ru_RU.png   \
+        icons2008/layoutswitcher-sv_SE.png
+endif
+
+
+ifdef 770
+inst: libLayoutSwitcher2006.so LayoutSwitcher2006.desktop $(ICONS)
+	mkdir -p inst/usr/lib/hildon-status-bar/
+	mkdir -p inst/usr/share/applications/hildon-status-bar/
+	mkdir -p inst/usr/share/icons/hicolor/40x40/hildon/
+	cp libLayoutSwitcher2006.so inst/usr/lib/hildon-status-bar/
+	cp LayoutSwitcher2006.desktop inst/usr/share/applications/hildon-status-bar/
+	cp $(COMMONICONS) inst/usr/share/icons/hicolor/40x40/hildon/
+	cp $(ICONS) inst/usr/share/icons/hicolor/40x40/hildon/
+else
+inst: libLayoutSwitcher2008.so LayoutSwitcher2008.desktop $(ICONS)
+	mkdir -p inst/usr/lib/hildon-desktop/
+	mkdir -p inst/usr/share/applications/hildon-status-bar/
+	mkdir -p inst/usr/share/icons/hicolor/40x40/hildon/
+	cp libLayoutSwitcher2008.so inst/usr/lib/hildon-desktop/
+	cp LayoutSwitcher2008.desktop inst/usr/share/applications/hildon-status-bar/
+	cp $(COMMONICONS) inst/usr/share/icons/hicolor/40x40/hildon/
+	cp $(ICONS) inst/usr/share/icons/hicolor/40x40/hildon/
+endif
+
+include deb.makefile
+
+clean:
+	rm -f *.o libLayoutSwitcher2006.so libLayoutSwitcher2008.so TestApp
+	rm -rf inst
+	rm -rf debian
+	rm -rf build
+
+.PHONY: all clean inst deb

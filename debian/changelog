@@ -1,0 +1,11 @@
+layoutswitcher (1.0.1) unstable; urgency=low
+
+  * No changes, just version increased in order to force update from Extras
+
+ -- Ilya Skriblovsky <Ilya.Skriblovsky@gmail.com>  28 Sep 2010 15:44:00 +0400
+
+layoutswitcher (1.0) unstable; urgency=low
+
+  * Changed to be able to be compiled by autobuilder
+
+ -- Ilya Skriblovsky <Ilya.Skriblovsky@gmail.com>  28 Sep 2010 14:52:00 +0400

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Layout Switcher
+Icon=layoutswitcher
+Category=permanent
+Type=default
+X-Path=libLayoutSwitcher2008.so
